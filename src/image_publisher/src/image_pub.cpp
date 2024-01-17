@@ -31,10 +31,17 @@ int main(int argc, char** argv)
     
     cv::Mat frame;
     ros::Rate loop_rate(30);
+    std_msgs::Header image_header;
+    image_header.seq = 0;
+    image_header.frame_id = "earth"; // 我这里选择earth类型的坐标系
     while (nh.ok()) {
         capture.read(frame);
-        sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-        pub.publish(msg);
+        if (!frame.empty()) {
+            image_header.seq++;
+            image_header.stamp = ros::Time::now();
+            sensor_msgs::ImagePtr msg = cv_bridge::CvImage(image_header, "bgr8", frame).toImageMsg();
+            pub.publish(msg);
+        }
         ros::spinOnce();
         loop_rate.sleep();
     }

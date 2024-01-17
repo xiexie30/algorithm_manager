@@ -20,6 +20,7 @@ class AlgorithmManager:
         # 存储算法名称和路径的字典列表
         self.algorithms = [
             {"name": "yolov8", "status":"stop", "conda_env": "yolov8", "command": "rosrun yolov8 detect.py"},
+            {"name": "yolov8_trt", "status":"stop", "conda_env": "", "command": "rosrun infer detect_trt"},
             {"name": "pose", "status":"stop", "conda_env": "yolov8", "command": "rosrun yolov8 pose.py"},
             # {"name": "track", "path": "/home/image514/xjb/ultralytics-main/", "file": "track.py"},
             # {"name": "classify", "path": "/home/image514/xjb/ultralytics-main/", "file": "classify.py"},
@@ -137,7 +138,11 @@ class AlgorithmManager:
             return
 
         conda_env = algorithm['conda_env']
-        if conda_env is not None:
+        print(f"conda_env: {conda_env}")
+        if conda_env == "":
+            command = algorithm["command"]
+        else:
+            print("conda_env is not None")
             # command = f"exec bash && source activate {conda_env} && " + algorithm["command"]
             command = f"conda run -n {conda_env} {algorithm['command']}"
         # if "file" in algorithm:
